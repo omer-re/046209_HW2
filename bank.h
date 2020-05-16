@@ -70,6 +70,10 @@ public:
     int transfer_money(unsigned int account_id1, unsigned int id1_pass, unsigned int account_id2, unsigned int id2_pass,
                        unsigned int amount_of_money);
 
+    void deposit(unsigned int account_id, std::string pass, unsigned int amount_of_money,
+                 std::string atm_ID); // Account deposit requested from atm <atm_ID>.
+
+
     void
     lockMap(std::string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
     void unlockMap(
