@@ -57,7 +57,7 @@ public:
         _log.close();
     }
 
-    void create_account();
+    void create_account(unsigned int acntNum, int initBalance, std::string pass);
 
     bool is_account_exists(unsigned int account_id);
 
@@ -67,7 +67,16 @@ public:
 
     void print_status();
 
-    int transfer_money(unsigned int account_id1, unsigned int id1_pass, unsigned int account_id2, unsigned int id2_pass,
+    void deposit(unsigned int acntNum, std::string pass,,
+
+    unsigned int amount, std::string
+    atmID)  // Deposite to account as requested by an ATM
+    void withdrawal(unsigned int acntNum, std::string pass,,
+
+    unsigned int amount, std::string
+    atmID)  // Deposite to account as requested by an ATM
+
+    int transfer_money(unsigned int source_account_id, unsigned int source_account__pass, unsigned int dest_account_id,
                        unsigned int amount_of_money);
 
     void deposit(unsigned int account_id, std::string pass, unsigned int amount_of_money,
@@ -79,6 +88,7 @@ public:
     void unlockMap(
             std::string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
     bool _done;
+
 };
 
 

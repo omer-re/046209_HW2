@@ -41,6 +41,9 @@ public:
     atm(std::string id, std::string cmd_file, bank &owner_bank); // atm's constructor, need to initialize _cmds
     bool execute_cmd(); // get the next command from _cmds and call the relevant bank method to execute it.
 
+
+
+
 };
 
 

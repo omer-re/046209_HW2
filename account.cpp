@@ -11,7 +11,7 @@
  * working under the assumption that write-lock is done
  * @param amount_of_money
  */
-void deposit(unsigned int amount_of_money) {
+void account::deposit(unsigned int amount_of_money) {
     _balance += amount_of_money;
 }
 
@@ -20,28 +20,29 @@ void deposit(unsigned int amount_of_money) {
  * @param amount_of_money
  * @return true if valid, false if not enough balance.
  */
-bool withdrawal(unsigned int amount_of_money) {  // if there's not enough balance - return false
+bool account::withdrawal(unsigned int amount_of_money) {  // if there's not enough balance - return false
     if (_balance >= amount_of_money) {
         _balance -= amount_of_money;
         return true;
     } else return false;
 }
 
-unsigned int getBalance() {
+unsigned int account::getBalance() {
     return _balance;
 }
 
-bool check_password(unsigned int password) {
+bool account::check_password(unsigned int password) {
     return (password == _password);
 }
 
 /** Prints the account status to stdout
  *  assumes read lock has been done
  */
-void account_print() {
+void account::account_print() {
     std::cout << "Account " << _account_id << ": Balance - " << _balance << " $ , Account Password - " << _password
               << std::endl;
 }
 
-void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
-void unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
+void account::lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
+void account::unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
+

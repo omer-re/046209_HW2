@@ -23,10 +23,19 @@
 //              (_numReaders,readlock,writelock) - used for readers/writers lock implementation
 //**************************************************************************************
 class account {
+private:
+    const unsigned int _account_id;
+    unsigned int _balance;
+    unsigned int _num_of_Readers;  // used for readers-writers implementation
+    const int _password;
+
+    pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
+    unsigned int _num_of_Readers;  // used for readers-writers implementation
+
 public:
     // C'tor + init the object's mutexs
-    account(unsigned int acntNum, int initBalance, std::string pass) :
-            _acntNum(acntNum), _balance(initBalance), _pass(pass), _vip(false), _numReaders(0) {
+    account(unsigned int acntNum, int initBalance, std::string pass, std::string atmID) :
+            _acntNum(acntNum), _balance(initBalance), _pass(pass), _numReaders(0) {
         if (pthread_mutex_init(&readlock, NULL) ||
             pthread_mutex_init(&writelock, NULL)) {   // init allocates memory, need to make sure sys call didnt fail
             perror("system call error:");
@@ -50,15 +59,6 @@ public:
     void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
     void unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
     void account_print();
-
-private:
-    const unsigned int _account_id;
-    unsigned int _balance;
-    unsigned int _num_of_Readers;  // used for readers-writers implementation
-    const int _password;
-
-    pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
-    unsigned int _num_of_Readers;  // used for readers-writers implementation
 
 
 
