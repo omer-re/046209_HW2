@@ -59,35 +59,31 @@ public:
 
     void create_account(unsigned int acntNum, int initBalance, std::string pass);
 
+    void bank::delete_account(unsigned int acntNum, std::string pass, std::string atmID);
     bool is_account_exists(unsigned int account_id);
 
     bool check_enough_balance(unsigned int account_id, unsigned int amount_of_money);
 
-    int collect_fee();
 
-    void print_status();
-
-    void deposit(unsigned int acntNum, std::string pass,,
-
-    unsigned int amount, std::string
-    atmID)  // Deposite to account as requested by an ATM
-    void withdrawal(unsigned int acntNum, std::string pass,,
-
-    unsigned int amount, std::string
-    atmID)  // Deposite to account as requested by an ATM
+    void deposit(unsigned int acntNum, std::string pass, unsigned int amount,
+                 std::string atmID); // Deposite to account as requested by an ATM
+    void withdrawal(unsigned int acntNum, std::string pass, unsigned int amount,
+                    std::string atmID);  // Deposite to account as requested by an ATM
 
     int transfer_money(unsigned int source_account_id, unsigned int source_account__pass, unsigned int dest_account_id,
                        unsigned int amount_of_money);
-
-    void deposit(unsigned int account_id, std::string pass, unsigned int amount_of_money,
-                 std::string atm_ID); // Account deposit requested from atm <atm_ID>.
-
 
     void
     lockMap(std::string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
     void unlockMap(
             std::string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
+
     bool _done;
+
+    void getStatus(); // Print full bank status to standard output.
+    int collect_fee();
+
+    void print_status();
 
 };
 

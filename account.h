@@ -50,17 +50,14 @@ public:
     }
 
     void deposit(unsigned int amount_of_money);
-
     bool withdrawal(unsigned int amount_of_money);  // if there's not enough balance - return false
     unsigned int getBalance();
-
     bool check_password(unsigned int password);
-
     void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
     void unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
     void account_print();
 
-
+    int check_num_of_readers();
 
 }
 
