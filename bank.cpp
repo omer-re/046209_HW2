@@ -46,6 +46,7 @@ bool bank::is_account_exists(unsigned int account_id) {
         // log the error
         return false;
     }
+    //  TODO: to check if there is a real problem with the "unreachable code" warning here
     // id was found
     unlockMap("read");
     return true;

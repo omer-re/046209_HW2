@@ -27,12 +27,12 @@ atm::atm(std::string id, std::string cmd_file, bank &owner_bank) : _id(id), _own
 
 
 // TODO : this function isn't done
-//*******************************************
-// function name: execute_cmd
-// Description: get the next command from _cmds and call the relevant bank method to execute it.
-// Parameters: none
-// Returns: True - there are more commands to execute, False - this was the last command
-//**************************************************************************************
+/**
+ *  Description: get the next command from _cmds and call the relevant bank method to execute it.
+ *  has to execute only one command at a time
+ *
+ * @return True - there are more commands to execute, False - this was the last command
+ */
 bool atm::execute_cmd() {
     if (_cmds.empty()) {   // should only enter this if _cmds was empty to begin with.
         return false;
@@ -60,3 +60,4 @@ bool atm::execute_cmd() {
     {}
     return !_cmds.empty();
 }
+
