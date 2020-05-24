@@ -66,7 +66,7 @@ int main(int argc, const char *argv[]) {
 
     //  Create a thread to each ATM
     for (int i = 0; i < atmNum; ++i) {
-        atmInfo[i].atmNum = to_string(i + 1);
+        atmInfo[i].atmNum = (i + 1);
         atmInfo[i].inFile = argv[i + 2];
         if (pthread_create(&atmThreads[i], NULL, atmRoutine, &atmInfo[i])) {
             perror("Error : ");
@@ -85,7 +85,7 @@ int main(int argc, const char *argv[]) {
         pthread_join(atmThreads[i], NULL);
 
     Bank._done = true;
-    pthread_join(fee_collection_routine, NULL);
+    pthread_join(FeeCollectionThread, NULL);
     pthread_join(statusThread, NULL);
 
 
@@ -106,7 +106,8 @@ void *fee_collection_routine(void *theBank) {    // routine to be run by the ban
     bank *Bank = (bank *) theBank;
     // run until a done indication is received from the main thread
     while (!(Bank->_done)) {
-        Bank->getCommission();
+        //Bank->getCommission();
+		Bank->collect_fee();
         sleep(3);
     }
 
@@ -126,7 +127,7 @@ void *atmRoutine(void *atmInfo) {    // routine to be run by each ATM
     atm Atm = atm(info->atmNum, info->inFile, info->theBank);
     // run while there are commands to be executed.
     //  executes a single command every T=100milisec
-    while (Atm.perform_cmd())
+    while (Atm.execute_cmd())
         usleep(100000);
     return NULL;
 }

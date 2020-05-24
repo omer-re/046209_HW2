@@ -18,16 +18,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 
-private:
-pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
-unsigned int _bankBalance, _accountsReaders;
-std::map<unsigned int, account> _accounts;
-std::ofstream _log;
+//private:
+//pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
+//unsigned int _bankBalance, _accountsReaders;
+//std::map<unsigned int, account> _accounts;
+//std::ofstream _log;
+using namespace std;
 
-
-class bank : {
+class bank {
 
 private:
     pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
@@ -57,26 +58,27 @@ public:
         _log.close();
     }
 
-    void create_account(unsigned int acntNum, int initBalance, std::string pass);
+    void create_account(unsigned int acntNum, int initBalance, string pass, string atmId);
 
-    void bank::delete_account(unsigned int acntNum, std::string pass, std::string atmID);
+    void delete_account(unsigned int acntNum, string pass, string atmID);
+
     bool is_account_exists(unsigned int account_id);
 
     bool check_enough_balance(unsigned int account_id, unsigned int amount_of_money);
 
 
-    void deposit(unsigned int acntNum, std::string pass, unsigned int amount,
+    void deposit(unsigned int acntNum, string pass, unsigned int amount,
                  std::string atmID); // Deposite to account as requested by an ATM
-    void withdrawal(unsigned int acntNum, std::string pass, unsigned int amount,
-                    std::string atmID);  // Deposite to account as requested by an ATM
+    void withdrawal(unsigned int acntNum, string pass, unsigned int amount,
+                    string atmID);  // Deposite to account as requested by an ATM
 
-    int transfer_money(unsigned int source_account_id, unsigned int source_account__pass, unsigned int dest_account_id,
-                       unsigned int amount_of_money);
+    int transfer_money(unsigned int source_account_id, string source_account__pass, unsigned int dest_account_id,
+                       unsigned int amount_of_money, string atmId);
 
     void
-    lockMap(std::string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
+    lockMap(string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
     void unlockMap(
-            std::string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
+            string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
 
     bool _done;
 

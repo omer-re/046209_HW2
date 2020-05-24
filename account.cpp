@@ -20,6 +20,7 @@ void account::deposit(unsigned int amount_of_money) {
  * @param amount_of_money
  * @return true if valid, false if not enough balance.
  */
+ 
 bool account::withdrawal(unsigned int amount_of_money) {  // if there's not enough balance - return false
     if (_balance >= amount_of_money) {
         _balance -= amount_of_money;
@@ -31,8 +32,11 @@ unsigned int account::getBalance() {
     return _balance;
 }
 
-bool account::check_password(unsigned int password) {
-    return (password == _password);
+bool account::check_password(string password) {
+	if (strcmp(str1, str2) == 0){
+		return true;
+}
+	return false;
 }
 
 /** Prints the account status to stdout
