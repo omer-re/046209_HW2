@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include "bank.h"
 
+using namespace std;
 
 //********************************************
 // Class name:  atm

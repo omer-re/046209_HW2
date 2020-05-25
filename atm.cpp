@@ -50,28 +50,25 @@ bool atm::execute_cmd() {
 	//TODO fill commands after conditions
 		// the bank supposed to have these methodes, but only checking and sending them to be executed by account class
 	int accountNum = atoi(args[1]);
-	int password = atoi(args[2]);
+    string password = args[2];
 	// check first argument, and call relevant method. input is guaranteed to be valid
-	if (args.front() == "O") {
+    if (args[0] == "O") {
+        cout << "blaaa" << endl;
 		int initial_amount = atoi(args[3]);
 
 		_owner_bank.create_account(accountNum, initial_amount, password, this->_id);
 
-	}
-	else if (args.front() == "D") {
+    } else if (args[0] == "D") {
 		int amount = atoi(args[3]);
 		_owner_bank.deposit(accountNum, password, amount, this->_id);
 
-	}
-	else if (args.front() == "W") {
+    } else if (args[0] == "W") {
 		int amount = atoi(args[3]);
 		_owner_bank.withdrawal(accountNum, password, amount, this->_id);
-	}
-	else if (args.front() == "B") {
-		_owner_bank.check_balance(accountNum, password);
+    } else if (args[0] == "B") {
+        _owner_bank.check_balance(accountNum, password, this->_id);
 
-	}
-	else if (args.front() == "Q") {
+    } else if (args[0] == "Q") {
 
 		_owner_bank.delete_account(accountNum, password, this->_id);
 
@@ -79,11 +76,12 @@ bool atm::execute_cmd() {
 	}
 	else // transfer command
 	{
-		string  target_account = atoi(args[3]);
+        int target_account = atoi(args[3]);
 		int amount = atoi(args[4]);
 		_owner_bank.transfer_money(accountNum, password, target_account, amount,this->_id);
 
 	}
-	return !_cmds.empty();
+    return !_cmds.empty();
 }
 
+}

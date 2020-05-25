@@ -6,6 +6,8 @@
  */
 #include "account.h"
 
+using namespace std;
+
 /**
  * add money to the account.
  * working under the assumption that write-lock is done
@@ -32,11 +34,8 @@ unsigned int account::getBalance() {
     return _balance;
 }
 
-bool account::check_password(string password) {
-	if (strcmp(str1, str2) == 0){
-		return true;
-}
-	return false;
+bool account::check_password(unsigned int password) {
+    return (password == _password);
 }
 
 /** Prints the account status to stdout
