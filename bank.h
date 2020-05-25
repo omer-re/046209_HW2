@@ -20,15 +20,10 @@
 #include <math.h>
 #include <iostream>
 
-
-//private:
-//pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
-//unsigned int _bankBalance, _accountsReaders;
-//std::map<unsigned int, account> _accounts;
-//std::ofstream _log;
 using namespace std;
 
-class bank {
+
+class bank : {
 
 private:
     pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
@@ -66,13 +61,15 @@ public:
 
     bool check_enough_balance(unsigned int account_id, unsigned int amount_of_money);
 
+    // exists on accounts
+    //void check_balance(unsigned int account_id, string pass, string atmId);
 
     void deposit(unsigned int acntNum, string pass, unsigned int amount,
                  std::string atmID); // Deposite to account as requested by an ATM
     void withdrawal(unsigned int acntNum, string pass, unsigned int amount,
                     string atmID);  // Deposite to account as requested by an ATM
 
-    int transfer_money(unsigned int source_account_id, string source_account__pass, unsigned int dest_account_id,
+    int transfer_money(unsigned int source_account_id, unsigned int source_account__pass, unsigned int dest_account_id,
                        unsigned int amount_of_money, string atmId);
 
     void
@@ -86,6 +83,9 @@ public:
     int collect_fee();
 
     void print_status();
+
+    void log(std::string tolog);
+
 
 };
 

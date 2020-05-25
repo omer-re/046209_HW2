@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <stdlib.h>
 
-using namespace std;
+
 //********************************************
 // Class name:  account
 // Description: used for maintaining the accounts in the bank's system.
@@ -27,15 +27,15 @@ private:
 	const unsigned int _account_id;
 	unsigned int _balance;
 	unsigned int _num_of_Readers;  // used for readers-writers implementation
-	string _password;
+    const int _password;
 
 	pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
-	//unsigned int _num_of_Readers;  // used for readers-writers implementation
+    unsigned int _num_of_Readers;  // used for readers-writers implementation
 
 public:
 	// C'tor + init the object's mutexs
-	account(unsigned int acntNum, int initBalance, string pass, string atmID) :
-		_account_id(acntNum), _balance(initBalance), _password(pass), _num_of_Readers(0) {
+    account(unsigned int acntNum, int initBalance, std::string pass, std::string atmID) :
+            _acntNum(acntNum), _balance(initBalance), _pass(pass), _numReaders(0) {
 		if (pthread_mutex_init(&readlock, NULL) ||
 			pthread_mutex_init(&writelock, NULL)) {   // init allocates memory, need to make sure sys call didnt fail
 			perror("system call error:");
@@ -52,14 +52,14 @@ public:
 	void deposit(unsigned int amount_of_money);
 	bool withdrawal(unsigned int amount_of_money);  // if there's not enough balance - return false
 	unsigned int getBalance();
-	bool check_password(string password);
+
+    bool check_password(unsigned int password);
 	void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
 	void unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
 	void account_print();
 
 	int check_num_of_readers();
-
-};
+}
 
 
 #endif //HW2_ACCOUNT_H
