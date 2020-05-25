@@ -13,6 +13,7 @@
 #define HW2_ATM_H
 
 #include <string>
+
 #include <list>
 #include <fstream>
 #include <iostream>

@@ -23,7 +23,15 @@
 using namespace std;
 
 
-class bank {
+
+private:
+pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
+unsigned int _bankBalance, _accountsReaders;
+std::map<unsigned int, account> _accounts;
+std::ofstream _log;
+
+
+class bank : {
 
 private:
     pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts

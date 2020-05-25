@@ -98,7 +98,7 @@ void bank::unlockMap(std::string rw) {
  * @param pass
  * @param atmID
  */
-void bank::create_account(unsigned int acntNum, int initBalance,std:: string pass, string atmID) {
+void bank::create_account(unsigned int acntNum, int initBalance, std::string pass, string atmID) {
     // verify valid 4 digits password
     std::string::const_iterator it = pass.begin();
     while (it != pass.end() && std::isdigit(*it)) ++it;
@@ -111,8 +111,8 @@ void bank::create_account(unsigned int acntNum, int initBalance,std:: string pas
     {
         log("Error " + atmID + ": Your transaction failed - account with the same id exists");
     } else {
-		_accounts.insert(pair < unsigned int, account >(acntNum, account(acntNum, initBalance, pass, atmID)));
-		sleep(1); //actions take 1 second to perform by definition
+        _accounts.insert(pair<unsigned int, account>(acntNum, account(acntNum, initBalance, pass, atmID)));
+        sleep(1); //actions take 1 second to perform by definition
         // success message
         log(atmID + ": New account id is " + to_string(acntNum) + " with password " + pass + " and initial balance " +
             to_string(initBalance));
@@ -148,7 +148,7 @@ void bank::deposit(unsigned int acntNum, string pass, unsigned int amount, strin
     // if we got here- all details are correct.
     //we request the lock
     _accounts.find(acntNum)->second.lock("write");
-	_accounts.find(acntNum)->second.deposit(amount);
+    _accounts.find(acntNum)->second.deposit(amount);
 
     sleep(1); //actions take 1 second to perform by definition
     // success message
@@ -212,7 +212,7 @@ void bank::withdrawal(unsigned int acntNum, string pass, unsigned int amount, st
  * @return
  */
 int bank::transfer_money(unsigned int source_account_id, string source_account__pass, unsigned int dest_account_id,
-                   unsigned int amount_of_money,string atmID) {
+                         unsigned int amount_of_money, string atmID) {
     // check source account exists
     if (!is_account_exists(source_account_id)) {
         // log the error and return
@@ -247,10 +247,7 @@ int bank::transfer_money(unsigned int source_account_id, string source_account__
 
     // check source has enough money
     bool enough_money = false;
-    bool enough_money = _accounts.find(source_account_id)->second.deposit(amount_of_money); 
-	
-
-
+    bool enough_money = _accounts.find(source_account_id)->second.deposit(amount_of_money);
     sleep(1); //actions take 1 second to perform by definition
     if (!enough_money) {
         // log action failure, free the lock.
@@ -283,7 +280,7 @@ void bank::getStatus() {// Print full bank status to standard output.
     //  we want to get the status off all the accounts at a certain point, and therefore have to
     //  first get the locks of all and not go one by one and release each immediately.
 
-	lockMap("read");
+    lockMap("read");
     // TODO should we prevent writing to map as well to avoid new accounts to be made while getting status?
     // TODO LockMap("write");
     std::map<unsigned int, account>::iterator it;
@@ -325,10 +322,10 @@ int bank::collect_fee() {
     for (it = _accounts.begin(); it != _accounts.end(); ++it) {
         it->second.lock("write");
 
-            profit = (unsigned int) round(it->second.getBalance() * commission);
-            it->second.withdrawal(profit);
-            total_profit += profit;
-            // log commissions taken from the account.
+        profit = (unsigned int) round(it->second.getBalance() * commission);
+        it->second.withdrawal(profit);
+        total_profit += profit;
+        // log commissions taken from the account.
         log("Bank: commissions of " + to_string((int) (commission * 100)) + " % were charged, the bank gained "
             + to_string(profit) + " $ from account " + to_string(it->first));
 
@@ -356,7 +353,7 @@ void bank::delete_account(unsigned int acntNum, string pass, string atmID) {
         return;
     }
     std::map<unsigned int, account>::iterator it_currently_handled_account;
-	it_currently_handled_account = _accounts.find(acntNum);
+    it_currently_handled_account = _accounts.find(acntNum);
 
     // verify password
     if (!it_currently_handled_account->second.check_password(pass)) {
@@ -388,7 +385,7 @@ void bank::delete_account(unsigned int acntNum, string pass, string atmID) {
     it_currently_handled_account->second.~account();
 
     //  TODO:  make sure we have cleaned all memory, threads and 2 locks
-	unlockMap("read");
+    unlockMap("read");
     // TODO unlockMap("write");???
 
     // log action success and free the lock.
