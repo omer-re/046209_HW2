@@ -26,7 +26,7 @@ class account {
 private:
 	const unsigned int _account_id;
 	unsigned int _balance;
-	int _num_of_Readers;  // used for readers-writers implementation
+	int _num_of_Readers=0;  // used for readers-writers implementation
     const int _password;
 
 	pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
@@ -34,8 +34,9 @@ private:
 
 public:
 	// C'tor + init the object's mutexs
-    account(unsigned int acntNum, int initBalance, std::string pass, std::string atmID) :
-            _account_id(acntNum), _balance(initBalance), _password(pass), _num_of_Readers(0) {
+    account(unsigned int acntNum, int initBalance, std::string pass) :
+            _account_id(acntNum), _balance(initBalance), _password(pass)
+            {
 
 		if (pthread_mutex_init(&readlock, NULL) ||
 			pthread_mutex_init(&writelock, NULL)) {   // init allocates memory, need to make sure sys call didnt fail
