@@ -23,7 +23,7 @@
 using namespace std;
 
 
-class bank : {
+class bank {
 
 private:
     pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
