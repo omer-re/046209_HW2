@@ -26,7 +26,7 @@ class account {
 private:
 	const unsigned int _account_id;
 	unsigned int _balance;
-	unsigned int _num_of_Readers;  // used for readers-writers implementation
+    int _num_of_Readers;  // used for readers-writers implementation
     const int _password;
 
 	pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
