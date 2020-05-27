@@ -22,7 +22,7 @@ void account::deposit(unsigned int amount_of_money) {
  * @param amount_of_money
  * @return true if valid, false if not enough balance.
  */
- 
+
 bool account::withdrawal(unsigned int amount_of_money) {  // if there's not enough balance - return false
     if (_balance >= amount_of_money) {
         _balance -= amount_of_money;

@@ -53,7 +53,7 @@ public:
         _log.close();
     }
 
-    void create_account(unsigned int acntNum, int initBalance, string pass, string atmId);
+    void create_account(unsigned int acntNum, unsigned int initBalance, string pass, string atmId);
 
     void delete_account(unsigned int acntNum, string pass, string atmID);
 
@@ -80,7 +80,7 @@ public:
     bool _done;
 
     void getStatus(); // Print full bank status to standard output.
-    int collect_fee();
+    void collect_fee();
 
     void print_status();
 

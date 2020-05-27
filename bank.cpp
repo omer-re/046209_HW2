@@ -15,7 +15,8 @@
 #include "account.h"
 #include "atm.h"
 #include <iostream>
-
+#include <string>
+#include <string.h>
 
 using namespace std;
 ofstream _log;
@@ -25,8 +26,8 @@ ofstream _log;
  * @param our input
  * @return string value
  */
-
-string to_string(unsigned int value) {
+/**
+string to_string(int value) {
     //create an output string stream
     ostringstream os;
 
@@ -35,8 +36,9 @@ string to_string(unsigned int value) {
 
     //convert the string stream into a string and return
     return os.str();
-}
- pthread_mutex_t logMutex;
+}**/
+
+pthread_mutex_t logMutex;
 
 
 /**
@@ -53,7 +55,6 @@ bool bank::is_account_exists(unsigned int account_id) {
         // log the error
         return false;
     }
-    //  TODO: to check if there is a real problem with the "unreachable code" warning here
     // id was found
     unlockMap("read");
     return true;
@@ -64,16 +65,23 @@ bool bank::is_account_exists(unsigned int account_id) {
  * Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
  * @param rw toggle for indicating read or write lock.
  */
-void bank::lockMap(std::string rw) {
-
-    if (rw == "read") // requested lock is read lock, perform reader lock as in the algorithm
+void bank::lockMap(const string rw) {
+    int result = rw.compare("read");
+    if (result == 0) // requested lock is read lock, perform reader lock as in the algorithm
     {
+        cout << " lock r" << endl;
+
         pthread_mutex_lock(&accountsReadlock);
         if (++_accountsReaders == 1)
             pthread_mutex_lock(&accountsWritelock);
         pthread_mutex_unlock(&accountsReadlock);
-    } else if (rw == "write")  // requested lock is write lock, perform reader lock as in the algorithm
+    } else {  // requested lock is write lock, perform reader lock as in the algorithm
         pthread_mutex_lock(&accountsWritelock);
+        pthread_mutex_unlock(&accountsReadlock);
+
+        cout << " lock w" << endl;
+
+    }
 }
 
 /**
@@ -82,13 +90,20 @@ void bank::lockMap(std::string rw) {
  */
 void bank::unlockMap(std::string rw) {
     //we assume that we are calling this func after one of the locks has been called, and that we are still dealing with the same flag (read or write)
-    if (rw == "read") {   // need to free the read lock
+    int result = rw.compare("read");
+    if (result == 0) {   // need to free the read lock
+        cout << " unlock r" << endl;
+
         pthread_mutex_lock(&accountsReadlock);
         if (--_accountsReaders == 0)
             pthread_mutex_unlock(&accountsWritelock);
         pthread_mutex_unlock(&accountsReadlock);
-    } else if (rw == "write")  // need to free the write lock
+    } else {  // need to free the write lock
+        cout << "unlock w" << endl;
         pthread_mutex_unlock(&accountsWritelock);
+        pthread_mutex_unlock(&accountsReadlock);
+
+    }
 }
 
 
@@ -99,7 +114,7 @@ void bank::unlockMap(std::string rw) {
  * @param pass
  * @param atmID
  */
-void bank::create_account(unsigned int acntNum, int initBalance, std::string pass, std::string atmID) {
+void bank::create_account(unsigned int acntNum, unsigned int initBalance, std::string pass, std::string atmID) {
     // verify valid 4 digits password
     std::string::const_iterator it = pass.begin();
     while (it != pass.end() && std::isdigit(*it)) ++it;
@@ -141,20 +156,30 @@ void bank::create_account(unsigned int acntNum, int initBalance, std::string pas
 void bank::deposit(unsigned int acntNum, string pass, unsigned int amount, string atmID) {
     // TODO prevent someone delete my account after I search for it
     // TODO locMap(write)
-    // lockMap("write");
-    cout << "scsrr" << endl;
-    pthread_mutex_lock(&logMutex);
-    if (!is_account_exists(acntNum)) {
+    lockMap("write");
+    //pthread_mutex_lock(&logMutex);
+    if (!is_account_exists(acntNum)) {  //TODO: maybe remove?
         // log the error and return
+        //if((_accounts.find(acntNum)) == _accounts.end()) //means it didn't find the id
         log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
             " is incorrect");
+
+        sleep(1); //actions take 1 second to perform by definition
+        // success message
+        unlockMap("write");
         return;
     }
     // verify password
     if (!_accounts.find(acntNum)->second.check_password(pass)) {
         // log bad pass, and return.
-        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
+        int account_num = acntNum;
+
+        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(account_num) +
             " is incorrect");
+
+        sleep(1); //actions take 1 second to perform by definition
+        // success message
+        unlockMap("write");
         return;
     }
     // if we got here- all details are correct.
@@ -164,11 +189,12 @@ void bank::deposit(unsigned int acntNum, string pass, unsigned int amount, strin
 
     sleep(1); //actions take 1 second to perform by definition
     // success message
-    // unlockMap("write");
-    pthread_mutex_unlock(&logMutex);
+    unlockMap("write");
+    //pthread_mutex_unlock(&logMutex);
 
     // log action success and free the lock.
     unsigned int newbalance = _accounts.find(acntNum)->second.getBalance();
+
     log(atmID + ": Account " + to_string(acntNum) + " new balance is " + to_string(newbalance) + " after " +
         to_string(amount) + " $ was deposited");
     _accounts.find(acntNum)->second.unlock("write");
@@ -185,6 +211,10 @@ void bank::withdrawal(unsigned int acntNum, string pass, unsigned int amount, st
         // log the error and return
         log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
             " is incorrect");
+
+        sleep(1); //actions take 1 second to perform by definition
+        // success message
+        unlockMap("write");
         return;
     }
     // verify password
@@ -192,6 +222,10 @@ void bank::withdrawal(unsigned int acntNum, string pass, unsigned int amount, st
         // log bad pass, and return.
         log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
             " is incorrect");
+
+        sleep(1); //actions take 1 second to perform by definition
+        // success message
+        unlockMap("write");
         return;
     }
     // if we got here- all details are correct.
@@ -200,7 +234,7 @@ void bank::withdrawal(unsigned int acntNum, string pass, unsigned int amount, st
 
     // make sure it has enough money in the account
     bool enough_money = false;
-    //bool enough_money = _accounts.find(acntNum)->second.withdrawal(amount);
+    enough_money = _accounts.find(acntNum)->second.withdrawal(amount);
     sleep(1); //actions take 1 second to perform by definition
     if (!enough_money) {
         // log action failure, free the lock.
@@ -260,10 +294,9 @@ int bank::transfer_money(unsigned int source_account_id, string source_account__
     _accounts.find(std::max(source_account_id, dest_account_id))->second.lock("write");
 
     // check source has enough money
+    // initialize to false and check
     bool enough_money = false;
-    //enough_money = _accounts.find(source_account_id)->second.deposit(amount_of_money);
-    //TODO: initialize to false and check
-
+    enough_money = _accounts.find(source_account_id)->second.withdrawal(amount_of_money);
 
 
     sleep(1); //actions take 1 second to perform by definition
@@ -286,6 +319,8 @@ int bank::transfer_money(unsigned int source_account_id, string source_account__
     // open locks
     _accounts.find(source_account_id)->second.unlock("write");
     _accounts.find(dest_account_id)->second.unlock("write");
+
+    return 1;
 
 }
 
@@ -330,7 +365,7 @@ void bank::getStatus() {// Print full bank status to standard output.
  * collect random fee (2-4%) every 3 seconds
  * @return
  */
-int bank::collect_fee() {
+void bank::collect_fee() {
     double commission = (rand() % 3 + 2) / 100.0;
     unsigned int profit, total_profit = 0;
     lockMap("read"); // no new accounts are made while running fee collection
@@ -340,7 +375,7 @@ int bank::collect_fee() {
     for (it = _accounts.begin(); it != _accounts.end(); ++it) {
         it->second.lock("write");
 
-            profit = (unsigned int) round(it->second.getBalance() * commission);
+        profit = (unsigned int) round(it->second.getBalance() * commission);
             it->second.withdrawal(profit);
             total_profit += profit;
             // log commissions taken from the account.
@@ -421,12 +456,9 @@ void bank::log(std::string tolog) {
     pthread_mutex_unlock(&loglock);
 }
 
-//  TODO: why not using the bank's?
-
-
 void bank::check_balance(unsigned int acntNum, string pass, string atmID) {
-		{
-			if (!is_account_exists(acntNum)) {
+
+    if (!is_account_exists(acntNum)) {
 				// log the error and return
 				_log << "Error " << atmID << ": Your transaction failed � account id " << acntNum <<
 					"does not exist" << endl;
@@ -443,9 +475,9 @@ void bank::check_balance(unsigned int acntNum, string pass, string atmID) {
 				" balance is: " << bal << endl;
 
 			return;
-		}
 
-	}
+
+}
 
 
 
