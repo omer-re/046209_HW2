@@ -36,6 +36,7 @@ string to_string(unsigned int value) {
     //convert the string stream into a string and return
     return os.str();
 }
+ pthread_mutex_t logMutex;
 
 
 /**
@@ -98,7 +99,7 @@ void bank::unlockMap(std::string rw) {
  * @param pass
  * @param atmID
  */
-void bank::create_account(unsigned int acntNum, int initBalance,std:: string pass, string atmID) {
+void bank::create_account(unsigned int acntNum, int initBalance, std::string pass, std::string atmID) {
     // verify valid 4 digits password
     std::string::const_iterator it = pass.begin();
     while (it != pass.end() && std::isdigit(*it)) ++it;
@@ -107,19 +108,28 @@ void bank::create_account(unsigned int acntNum, int initBalance,std:: string pas
 
     // password is valid
     lockMap("write");
+/**
+	if (pthread_mutex_lock(&logMutex) != 0) {
+		perror("");
+		exit(1);
+	}**/
     if (_accounts.find(acntNum) != _accounts.end())  // means this number is already exists
     {
         log("Error " + atmID + ": Your transaction failed - account with the same id exists");
     } else {
-		_accounts.insert(pair < unsigned int, account >(acntNum, account(acntNum, initBalance, pass, atmID)));
-		sleep(1); //actions take 1 second to perform by definition
+        _accounts.insert(pair<unsigned int, account>(acntNum, account(acntNum, initBalance, pass, atmID)));
+        sleep(1); //actions take 1 second to perform by definition
         // success message
         log(atmID + ": New account id is " + to_string(acntNum) + " with password " + pass + " and initial balance " +
             to_string(initBalance));
     }
-    unlockMap("write");
-}
 
+    unlockMap("write");
+    /**if (pthread_mutex_unlock(&logMutex) != 0) {
+        perror("");
+        exit(1);
+}**/
+}
 
 /**
  * Deposite to account as requested by an ATM
@@ -131,7 +141,9 @@ void bank::create_account(unsigned int acntNum, int initBalance,std:: string pas
 void bank::deposit(unsigned int acntNum, string pass, unsigned int amount, string atmID) {
     // TODO prevent someone delete my account after I search for it
     // TODO locMap(write)
-    lockMap("write");
+    // lockMap("write");
+    cout << "scsrr" << endl;
+    pthread_mutex_lock(&logMutex);
     if (!is_account_exists(acntNum)) {
         // log the error and return
         log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
@@ -148,15 +160,17 @@ void bank::deposit(unsigned int acntNum, string pass, unsigned int amount, strin
     // if we got here- all details are correct.
     //we request the lock
     _accounts.find(acntNum)->second.lock("write");
-	_accounts.find(acntNum)->second.deposit(amount);
+    _accounts.find(acntNum)->second.deposit(amount);
 
     sleep(1); //actions take 1 second to perform by definition
     // success message
-    unlockMap("write");
+    // unlockMap("write");
+    pthread_mutex_unlock(&logMutex);
+
     // log action success and free the lock.
     unsigned int newbalance = _accounts.find(acntNum)->second.getBalance();
     log(atmID + ": Account " + to_string(acntNum) + " new balance is " + to_string(newbalance) + " after " +
-        to_string(amnt) + " $ was deposited");
+        to_string(amount) + " $ was deposited");
     _accounts.find(acntNum)->second.unlock("write");
 
 }
@@ -186,12 +200,12 @@ void bank::withdrawal(unsigned int acntNum, string pass, unsigned int amount, st
 
     // make sure it has enough money in the account
     bool enough_money = false;
-    bool enough_money = _accounts.find(acntNum)->second.withdrawal(amount);
+    //bool enough_money = _accounts.find(acntNum)->second.withdrawal(amount);
     sleep(1); //actions take 1 second to perform by definition
     if (!enough_money) {
         // log action failure, free the lock.
         log("Error " + atmID + ": Your transaction failed - account id " + to_string(acntNum) +
-            " balance is lower than " + to_string(amnt));
+            " balance is lower than " + to_string(amount));
         _accounts.find(acntNum)->second.unlock("write");
         return;
     }
@@ -199,7 +213,7 @@ void bank::withdrawal(unsigned int acntNum, string pass, unsigned int amount, st
     // log action success and free the lock.
     unsigned int newbalance = _accounts.find(acntNum)->second.getBalance();
     log(atmID + ": Account " + to_string(acntNum) + " new balance is " + to_string(newbalance) + " after " +
-        to_string(amnt) + " $ was withdrew");
+        to_string(amount) + " $ was withdrew");
     _accounts.find(acntNum)->second.unlock("write");
 }
 
@@ -216,23 +230,23 @@ int bank::transfer_money(unsigned int source_account_id, string source_account__
     // check source account exists
     if (!is_account_exists(source_account_id)) {
         // log the error and return
-        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
-            " is incorrect");
-        return;
+        log("Error " + atmID + ": Your transaction failed  – account id " + to_string(source_account_id) +
+            " does not exist");
+        return -1;
     }
     // check source account password
     if (!_accounts.find(source_account_id)->second.check_password(source_account__pass)) {
         // log bad pass, and return.
-        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
+        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(source_account_id) +
             " is incorrect");
-        return;
+        return -1;
     }
 
     // check dest account exists
     if (!is_account_exists(dest_account_id)) {
         // log the error and return
-        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
-            " is incorrect");
+        log("Error " + atmID + ": Your transaction failed – account id " + to_string(dest_account_id) +
+            " does not exist");
         return -1;
     }
     // dest account password isn't checked- as instructed
@@ -247,16 +261,17 @@ int bank::transfer_money(unsigned int source_account_id, string source_account__
 
     // check source has enough money
     bool enough_money = false;
-    bool enough_money = _accounts.find(source_account_id)->second.deposit(amount_of_money); 
-	
+    //enough_money = _accounts.find(source_account_id)->second.deposit(amount_of_money);
+    //TODO: initialize to false and check
+
 
 
     sleep(1); //actions take 1 second to perform by definition
     if (!enough_money) {
         // log action failure, free the lock.
-        log("Error " + atmID + ": Your transaction failed - account id " + to_string(acntNum) +
-            " balance is lower than " + to_string(amnt));
-        _accounts.find(acntNum)->second.unlock("write");
+        log("Error " + atmID + ": Your transaction failed - account id " + to_string(source_account_id) +
+            " balance is lower than " + to_string(amount_of_money));
+        _accounts.find(source_account_id)->second.unlock("write");
         return -1;
     } else {
         // deposit to dest account. log the transfer success.
@@ -382,13 +397,13 @@ void bank::delete_account(unsigned int acntNum, string pass, string atmID) {
     it_currently_handled_account->second.lock("read");
 
     //  save last balance value for logging it
-    unsigned int last_balance = it_currently_handled_account->second.getBalance()
+    unsigned int last_balance = it_currently_handled_account->second.getBalance();
 
     //  call account's d'tor
     it_currently_handled_account->second.~account();
 
     //  TODO:  make sure we have cleaned all memory, threads and 2 locks
-	unlockMap("read");
+    unlockMap("read");
     // TODO unlockMap("write");???
 
     // log action success and free the lock.
@@ -406,10 +421,9 @@ void bank::log(std::string tolog) {
     pthread_mutex_unlock(&loglock);
 }
 
+//  TODO: why not using the bank's?
 
 
-/**
- *
 void bank::check_balance(unsigned int acntNum, string pass, string atmID) {
 		{
 			if (!is_account_exists(acntNum)) {
@@ -434,5 +448,4 @@ void bank::check_balance(unsigned int acntNum, string pass, string atmID) {
 	}
 
 
- **/
 

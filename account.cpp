@@ -34,8 +34,11 @@ unsigned int account::getBalance() {
     return _balance;
 }
 
-bool account::check_password(unsigned int password) {
-    return (password == _password);
+bool account::check_password(string password) {
+    if (_password == password) {
+        return true;
+    }
+    return false;
 }
 
 /** Prints the account status to stdout

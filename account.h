@@ -9,11 +9,14 @@
 #define HW2_ACCOUNT_H
 
 #include <string>
+#include <string.h>
+
 #include <pthread.h>
 #include <iostream>
 #include <cstdio>
 #include <stdlib.h>
 
+using namespace std;
 
 //********************************************
 // Class name:  account
@@ -27,14 +30,14 @@ private:
 	const unsigned int _account_id;
 	unsigned int _balance;
 	int _num_of_Readers=0;  // used for readers-writers implementation
-    const int _password;
+    string _password;
 
 	pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
 
 
 public:
 	// C'tor + init the object's mutexs
-    account(unsigned int acntNum, int initBalance, std::string pass) :
+    account(unsigned int acntNum, int initBalance, std::string pass, string atmId) :
             _account_id(acntNum), _balance(initBalance), _password(pass)
             {
 
@@ -55,8 +58,9 @@ public:
 	bool withdrawal(unsigned int amount_of_money);  // if there's not enough balance - return false
 	unsigned int getBalance();
 
-    bool check_password(unsigned int password);
-	void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
+    bool check_password(string password);
+
+    void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
 	void unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
 	void account_print();
 

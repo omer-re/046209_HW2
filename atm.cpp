@@ -47,24 +47,24 @@ bool atm::execute_cmd() {
     std::string s("");
     while (std::getline(streamer, s, ' ')) // push the split arguments into args.
         args.push_back(s);
-	//TODO fill commands after conditions
-		// the bank supposed to have these methodes, but only checking and sending them to be executed by account class
-	int accountNum = atoi(args[1]);
-    string password = args[2];
-	// check first argument, and call relevant method. input is guaranteed to be valid
-    if (args[0] == "O") {
-        cout << "blaaa" << endl;
-		int initial_amount = atoi(args[3]);
+    //TODO fill commands after conditions
+    // the bank supposed to have these methodes, but only checking and sending them to be executed by account class
 
-		_owner_bank.create_account(accountNum, initial_amount, password, this->_id);
+    int accountNum = atoi(args[1].c_str());
+    string password = args[2];
+    // check first argument, and call relevant method. input is guaranteed to be valid
+    if (args[0] == "O") {
+        int initial_amount = atoi(args[3].c_str());
+
+        _owner_bank.create_account(accountNum, initial_amount, password, this->_id);
 
     } else if (args[0] == "D") {
-		int amount = atoi(args[3]);
-		_owner_bank.deposit(accountNum, password, amount, this->_id);
+        int amount = atoi(args[3].c_str());
+        _owner_bank.deposit(accountNum, password, amount, this->_id);
 
     } else if (args[0] == "W") {
-		int amount = atoi(args[3]);
-		_owner_bank.withdrawal(accountNum, password, amount, this->_id);
+        int amount = atoi(args[3].c_str());
+        _owner_bank.withdrawal(accountNum, password, amount, this->_id);
     } else if (args[0] == "B") {
         _owner_bank.check_balance(accountNum, password, this->_id);
 
@@ -75,13 +75,12 @@ bool atm::execute_cmd() {
 
 	}
 	else // transfer command
-	{
-        int target_account = atoi(args[3]);
-		int amount = atoi(args[4]);
-		_owner_bank.transfer_money(accountNum, password, target_account, amount,this->_id);
+    {
+        int target_account = atoi(args[3].c_str());
+        int amount = atoi(args[4].c_str());
+        _owner_bank.transfer_money(accountNum, password, target_account, amount, this->_id);
 
-	}
+    }
     return !_cmds.empty();
 }
 
-}

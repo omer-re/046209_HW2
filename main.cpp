@@ -111,7 +111,7 @@ void *fee_collection_routine(void *theBank) {    // routine to be run by the ban
         sleep(3);
     }
 
-    return NULL;
+ //   return NULL;
 }
 
 /**
@@ -129,7 +129,7 @@ void *atmRoutine(void *atmInfo) {    // routine to be run by each ATM
     //  executes a single command every T=100milisec
     while (Atm.execute_cmd())
         usleep(100000);
-    return NULL;
+    //return NULL;
 }
 
 /**
@@ -142,9 +142,9 @@ void *statusRoutine(void *theBank) {
     bank *Bank = (bank *) theBank;
     // runs until a done flag is received from the main thread
     while (!(Bank->_done)) {
-        Bank->getStatus();
         usleep(500000);
-    }
 
-    return NULL;
+        Bank->getStatus();
+    }
+    // return NULL;
 }
