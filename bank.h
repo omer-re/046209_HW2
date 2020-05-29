@@ -69,7 +69,7 @@ public:
     void withdrawal(unsigned int acntNum, string pass, unsigned int amount,
                     string atmID);  // Deposite to account as requested by an ATM
 
-    int transfer_money(unsigned int source_account_id, std::string source_account__pass, unsigned int dest_account_id,
+    int transfer_money(unsigned int source_account_id, std::string source_account_pass, unsigned int dest_account_id,
                        unsigned int amount_of_money, string atmId);
 
     void
