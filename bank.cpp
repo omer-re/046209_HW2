@@ -80,7 +80,7 @@ void bank::lockMap(const string rw) {
     else {  // requested lock is write lock, perform reader lock as in the algorithm
         pthread_mutex_lock(&accountsReadlock);
         if (++_accountsReaders == 1)   //TODO: should it be "while"?
-            pthread_mutex_lock(&accountsWritelock)
+            pthread_mutex_lock(&accountsWritelock);
         pthread_mutex_unlock(&accountsReadlock);  // TODO: not sure why it's here
 
         cout << " lock w" << endl; // TODO: remove
