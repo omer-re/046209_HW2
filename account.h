@@ -17,7 +17,6 @@
 #include <stdlib.h>
 
 using namespace std;
-
 //********************************************
 // Class name:  account
 // Description: used for maintaining the accounts in the bank's system.
@@ -30,14 +29,14 @@ private:
 	const unsigned int _account_id;
 	unsigned int _balance;
 	int _num_of_Readers=0;  // used for readers-writers implementation
-    string _password;
+     string _password;
 
 	pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
 
 
 public:
 	// C'tor + init the object's mutexs
-    account(unsigned int acntNum, int initBalance, std::string pass, string atmId) :
+    account( unsigned int acntNum, int initBalance, std::string pass, string atmId) :
             _account_id(acntNum), _balance(initBalance), _password(pass)
             {
 
@@ -59,8 +58,7 @@ public:
 	unsigned int getBalance();
 
     bool check_password(string password);
-
-    void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
+	void lock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
 	void unlock(std::string rw); // Wrapper function for managing Readers/Writers mutual exclusions
 	void account_print();
 

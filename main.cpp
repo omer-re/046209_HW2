@@ -28,7 +28,6 @@ typedef struct atmData {
     string atmNum;
     bank &theBank;
     string inFile;
-
     atmData(bank &Bank) : theBank(Bank) {} // atmData constructor, for initializing the bank's reference
 } atmData;
 
@@ -89,7 +88,7 @@ int main(int argc, const char *argv[]) {
     pthread_join(FeeCollectionThread, NULL);
     pthread_join(statusThread, NULL);
 
-
+	
     //  arrives here once EOF commands
     return 0;
 
@@ -108,11 +107,11 @@ void *fee_collection_routine(void *theBank) {    // routine to be run by the ban
     // run until a done indication is received from the main thread
     while (!(Bank->_done)) {
         //Bank->getCommission();
-        Bank->collect_fee();
+		Bank->collect_fee();
         sleep(3);
     }
 
-    return NULL;
+ //   return NULL;
 }
 
 /**
@@ -130,7 +129,7 @@ void *atmRoutine(void *atmInfo) {    // routine to be run by each ATM
     //  executes a single command every T=100milisec
     while (Atm.execute_cmd())
         usleep(100000);
-    return NULL;
+    //return NULL;
 }
 
 /**
@@ -143,9 +142,9 @@ void *statusRoutine(void *theBank) {
     bank *Bank = (bank *) theBank;
     // runs until a done flag is received from the main thread
     while (!(Bank->_done)) {
-        usleep(500000);
+		usleep(500000);
 
         Bank->getStatus();
     }
-    return NULL;
+   // return NULL;
 }

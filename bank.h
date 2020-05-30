@@ -9,7 +9,8 @@
 
 #ifndef HW2_BANK_H
 #define HW2_BANK_H
-
+#include <string>
+#include <string.h>
 #include <pthread.h>
 #include <map>
 #include <fstream>
@@ -50,10 +51,11 @@ public:
         pthread_mutex_destroy(&accountsReadlock);
         pthread_mutex_destroy(&accountsWritelock);
         pthread_mutex_destroy(&loglock);
-        _log.close();
+       _log.close();
     }
 
-    void create_account(unsigned int acntNum, unsigned int initBalance, string pass, string atmId);
+
+    void create_account(unsigned int acntNum, int initBalance, string pass, string atmId);
 
     void delete_account(unsigned int acntNum, string pass, string atmID);
 
@@ -61,26 +63,27 @@ public:
 
     bool check_enough_balance(unsigned int account_id, unsigned int amount_of_money);
 
+	void check_balance(unsigned int account_id, string pass, string atmId);
+
     // exists on accounts
-    void check_balance(unsigned int account_id, string pass, string atmId);
+    //void check_balance(unsigned int account_id, string pass, string atmId);
 
     void deposit(unsigned int acntNum, string pass, unsigned int amount,
                  std::string atmID); // Deposite to account as requested by an ATM
     void withdrawal(unsigned int acntNum, string pass, unsigned int amount,
                     string atmID);  // Deposite to account as requested by an ATM
 
-    int transfer_money(unsigned int source_account_id, std::string source_account_pass, unsigned int dest_account_id,
+    int transfer_money(unsigned int source_account_id, std::string source_account__pass, unsigned int dest_account_id,
                        unsigned int amount_of_money, string atmId);
 
     void
     lockMap(string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
-    void unlockMap(
-            string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
+    void unlockMap(string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
 
     bool _done;
 
     void getStatus(); // Print full bank status to standard output.
-    void collect_fee();
+    int collect_fee();
 
     void print_status();
 

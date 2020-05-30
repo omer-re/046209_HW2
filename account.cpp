@@ -22,7 +22,7 @@ void account::deposit(unsigned int amount_of_money) {
  * @param amount_of_money
  * @return true if valid, false if not enough balance.
  */
-
+ 
 bool account::withdrawal(unsigned int amount_of_money) {  // if there's not enough balance - return false
     if (_balance >= amount_of_money) {
         _balance -= amount_of_money;
@@ -35,10 +35,10 @@ unsigned int account::getBalance() {
 }
 
 bool account::check_password(string password) {
-    if (_password == password) {
-        return true;
-    }
-    return false;
+	if (_password == password) {
+		return true;
+	}
+	return false;
 }
 
 /** Prints the account status to stdout
@@ -56,20 +56,26 @@ void account::lock(std::string rw) { // Wrapper function for managing Readers/Wr
             pthread_mutex_lock(&writelock);
         pthread_mutex_unlock(&readlock);
     } // requested lock is write lock, perform write lock as in the algorithm
-    else if (rw == "write")
-        pthread_mutex_lock(&writelock);
+	else if (rw == "write") {
+		pthread_mutex_lock(&writelock);
+		//pthread_mutex_lock(&readlock);
+
+	}
 }
 
 void account::unlock(std::string rw) { // Wrapper function for managing Readers/Writers mutual exclusions
 // It is assumed that unlock is called after lock was called, and with the same rw
-    if (rw == "read") { // need to free the read lock
-        pthread_mutex_lock(&readlock);
-        if (--_num_of_Readers == 0)
-            pthread_mutex_unlock(&writelock);
-        pthread_mutex_unlock(&readlock);
-    } // need to free the write lock
-    else if (rw == "write")
-        pthread_mutex_unlock(&writelock);
+	if (rw == "read") { // need to free the read lock
+		pthread_mutex_lock(&readlock);
+		if (--_num_of_Readers == 0)
+			pthread_mutex_unlock(&writelock);
+		pthread_mutex_unlock(&readlock);
+	} // need to free the write lock
+	else if (rw == "write") {
+		pthread_mutex_unlock(&writelock);
+		//pthread_mutex_unlock(&readlock);
+
+	}
 }
 
 
