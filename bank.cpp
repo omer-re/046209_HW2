@@ -169,7 +169,7 @@ void bank::deposit(unsigned int acntNum, string pass, unsigned int amount, strin
     if (!is_account_exists(acntNum)) {  //TODO: maybe remove?
         // log the error and return
         //if((_accounts.find(acntNum)) == _accounts.end()) //means it didn't find the id
-        log("Error " + atmID + ": Your transaction failed - account id " + to_string(acntNum) +
+        log("Error " + atmID + ": Your transaction failed - account id " + convert_to_string(acntNum) +
             " does not exist");
 
         sleep(1); //actions take 1 second to perform by definition
@@ -527,7 +527,7 @@ void bank::check_balance(unsigned int acntNum, string pass, string atmID) {
     unlockMap("read");
     if (!is_account_exists(acntNum)) {
         // log the error and return
-        log("Error " + atmID + ": Your transaction failed - account id " + to_string(acntNum) +
+        log("Error " + atmID + ": Your transaction failed - account id " + convert_to_string(acntNum) +
             " does not exist");
 
         sleep(1); //actions take 1 second to perform by definition
@@ -537,13 +537,13 @@ void bank::check_balance(unsigned int acntNum, string pass, string atmID) {
     }
     if (!_accounts.find(acntNum)->second.check_password(pass)) {
         // log bad pass, and return.
-        log("Error " + atmID + ": Your transaction failed - password for account id " + to_string(acntNum) +
+        log("Error " + atmID + ": Your transaction failed - password for account id " + convert_to_string(acntNum) +
             " is incorrect");
         unlockMap("write");
         return;
     }
     unsigned int bal = _accounts.find(acntNum)->second.getBalance();
-    log(atmID + ": Account " + to_string(acntNum) + " balance is: " + to_string(bal));
+    log(atmID + ": Account " + convert_to_string(acntNum) + " balance is: " + convert_to_string(bal));
     _accounts.find(acntNum)->second.unlock("read");
 
     unlockMap("write");
