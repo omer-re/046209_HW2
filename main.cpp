@@ -62,12 +62,11 @@ int main(int argc, const char *argv[]) {
     // create the pthread objects
     vector <pthread_t> atmThreads(atmNum);
     vector <atmData> atmInfo(atmNum, atmData(Bank));
-    pthread_t FeeCollectionThread;
-    pthread_t statusThread;
+    pthread_t FeeCollectionThread, statusThread;
 
     //  Create a thread to each ATM
     for (int i = 0; i < atmNum; ++i) {
-        atmInfo[i].atmNum = to_string(i + 1);
+        atmInfo[i].atmNum = (i + 1);
         atmInfo[i].inFile = argv[i + 2];
         if (pthread_create(&atmThreads[i], NULL, atmRoutine, &atmInfo[i])) {
             perror("Error : ");
@@ -86,11 +85,10 @@ int main(int argc, const char *argv[]) {
         pthread_join(atmThreads[i], NULL);
 
     Bank._done = true;
-
     pthread_join(FeeCollectionThread, NULL);
     pthread_join(statusThread, NULL);
 
-
+	
     //  arrives here once EOF commands
     return 0;
 
@@ -108,11 +106,12 @@ void *fee_collection_routine(void *theBank) {    // routine to be run by the ban
     bank *Bank = (bank *) theBank;
     // run until a done indication is received from the main thread
     while (!(Bank->_done)) {
-        Bank->collect_fee();
+        //Bank->getCommission();
+		Bank->collect_fee();
         sleep(3);
     }
 
-    return NULL;
+ //   return NULL;
 }
 
 /**
@@ -125,14 +124,12 @@ void *fee_collection_routine(void *theBank) {    // routine to be run by the ban
 void *atmRoutine(void *atmInfo) {    // routine to be run by each ATM
     atmData *info = (atmData *) atmInfo;
     // for each ATM, initialize atb object (with C'tor) for the required parameters
-    string str = info->inFile;
-    const char *cstr = str.c_str();
-    atm Atm = atm(info->atmNum, cstr, info->theBank);
+    atm Atm = atm(info->atmNum, info->inFile, info->theBank);
     // run while there are commands to be executed.
     //  executes a single command every T=100milisec
     while (Atm.execute_cmd())
         usleep(100000);
-    return NULL;
+    //return NULL;
 }
 
 /**
@@ -145,11 +142,9 @@ void *statusRoutine(void *theBank) {
     bank *Bank = (bank *) theBank;
     // runs until a done flag is received from the main thread
     while (!(Bank->_done)) {
+		usleep(500000);
 
-        usleep(500000);
         Bank->getStatus();
-
     }
-
-    return NULL;
+   // return NULL;
 }
