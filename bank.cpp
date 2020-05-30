@@ -466,7 +466,7 @@ void bank::delete_account(unsigned int acntNum, string pass, string atmID) {
         return;
     }
     std::map<unsigned int, account>::iterator it_currently_handled_account;
-	it_currently_handled_account = _accounts.find(acntNum);
+    it_currently_handled_account = _accounts.find(acntNum);
 
     // verify password
     if (!it_currently_handled_account->second.check_password(pass)) {
