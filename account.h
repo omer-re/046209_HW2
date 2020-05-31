@@ -26,19 +26,18 @@ using namespace std;
 //**************************************************************************************
 class account {
 private:
-	const unsigned int _account_id;
-	unsigned int _balance;
-	int _num_of_Readers=0;  // used for readers-writers implementation
-     string _password;
+    const unsigned int _account_id;
+    unsigned int _balance;
+    int _num_of_Readers;  // used for readers-writers implementation
+    string _password;
 
-	pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
+    pthread_mutex_t readlock, writelock; // for readers/writers lock implementation
 
 
 public:
-	// C'tor + init the object's mutexs
-    account( unsigned int acntNum, int initBalance, std::string pass, string atmId) :
-            _account_id(acntNum), _balance(initBalance), _password(pass)
-            {
+    // C'tor + init the object's mutexs
+    account(unsigned int acntNum, int initBalance, std::string pass, string atmId) :
+            _account_id(acntNum), _balance(initBalance), _password(pass), _num_of_Readers(0) {
 
 		if (pthread_mutex_init(&readlock, NULL) ||
 			pthread_mutex_init(&writelock, NULL)) {   // init allocates memory, need to make sure sys call didnt fail
