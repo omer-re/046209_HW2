@@ -14,5 +14,6 @@ bank.o: bank.cpp bank.h account.h
 main.o: main.cpp account.h bank.h atm.h
 # Cleaning old files before new make
 clean:
+	rm -f Bank $(OBJS)
 	$(RM) $(TARGET) *.o *~ "#"* core.*
 

@@ -24,13 +24,11 @@
 using namespace std;
 
 
-
 class bank {
 
 private:
     pthread_mutex_t loglock, balanceLock, accountsWritelock, accountsReadlock; // accountsWritelock - for limiting when you can create new accounts
-    unsigned int _accountsReaders;
-    unsigned int _bankBalance;
+    unsigned int _bankBalance, _accountsReaders;
     map<unsigned int, account> _accounts;
     ofstream _log;
 
@@ -56,7 +54,8 @@ public:
         _log.close();
     }
 
-    void create_account(unsigned int acntNum, unsigned int initBalance, string pass, string atmId);
+
+    void create_account(unsigned int acntNum, int initBalance, string pass, string atmId);
 
     void delete_account(unsigned int acntNum, string pass, string atmID);
 
@@ -64,21 +63,19 @@ public:
 
     bool check_enough_balance(unsigned int account_id, unsigned int amount_of_money);
 
-    // exists on accounts
-    void check_balance(unsigned int account_id, string pass, string atmId);
+	void check_balance(unsigned int account_id, string pass, string atmId);
 
     void deposit(unsigned int acntNum, string pass, unsigned int amount,
                  std::string atmID); // Deposite to account as requested by an ATM
     void withdrawal(unsigned int acntNum, string pass, unsigned int amount,
                     string atmID);  // Deposite to account as requested by an ATM
 
-    int transfer_money(unsigned int source_account_id, std::string source_account_pass, unsigned int dest_account_id,
+    int transfer_money(unsigned int source_account_id, std::string source_account__pass, unsigned int dest_account_id,
                        unsigned int amount_of_money, string atmId);
 
     void
     lockMap(string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
-    void unlockMap(
-            string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
+    void unlockMap(string rw); // Wrapper function for implementing readers/writers mutual exclusion on the accounts map in the bank.
 
     bool _done;
 
@@ -89,8 +86,8 @@ public:
 
     void log(std::string tolog);
 
-
-};
+    };
 
 
 #endif //HW2_BANK_H
+// 4.06 15.00 removed comments

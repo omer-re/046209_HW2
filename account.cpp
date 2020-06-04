@@ -50,15 +50,21 @@ void account::account_print() {
 }
 
 void account::lock(std::string rw) { // Wrapper function for managing Readers/Writers mutual exclusions
-    if (rw == "read") { // requested lock is read lock, perform reader lock as in the algorithm
-        pthread_mutex_lock(&readlock);
-        if (++_num_of_Readers == 1)
-            pthread_mutex_lock(&writelock);
-        pthread_mutex_unlock(&readlock);
-    } // requested lock is write lock, perform write lock as in the algorithm
+	if (rw == "read") { // requested lock is read lock, perform reader lock as in the algorithm
+
+		pthread_mutex_lock(&readlock);
+		_num_of_Readers++;
+		if (_num_of_Readers == 1) {
+			pthread_mutex_lock(&writelock);
+		}
+		pthread_mutex_unlock(&readlock);
+		// need to free the write lock
+
+	}// requested lock is write lock, perform write lock as in the algorithm
+
 	else if (rw == "write") {
+
 		pthread_mutex_lock(&writelock);
-		//pthread_mutex_lock(&readlock);
 
 	}
 }
@@ -66,15 +72,16 @@ void account::lock(std::string rw) { // Wrapper function for managing Readers/Wr
 void account::unlock(std::string rw) { // Wrapper function for managing Readers/Writers mutual exclusions
 // It is assumed that unlock is called after lock was called, and with the same rw
 	if (rw == "read") { // need to free the read lock
+
 		pthread_mutex_lock(&readlock);
-		if (--_num_of_Readers == 0)
+		_num_of_Readers--;
+		if (_num_of_Readers == 0) {
 			pthread_mutex_unlock(&writelock);
+		}
 		pthread_mutex_unlock(&readlock);
-	} // need to free the write lock
+	}// need to free the write lock
 	else if (rw == "write") {
 		pthread_mutex_unlock(&writelock);
-		//pthread_mutex_unlock(&readlock);
-
 	}
 }
 
@@ -82,3 +89,10 @@ void account::unlock(std::string rw) { // Wrapper function for managing Readers/
 int account::check_num_of_readers() {
     return _num_of_Readers;
 }
+
+string account::getpass()
+{
+	return _password;
+}
+
+// 4.06 15.00 removed comments

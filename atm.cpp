@@ -38,8 +38,6 @@ bool atm::execute_cmd() {
         return false;
     }
 
-    //TODO I have copied most of it from stackoverflow, needs to be adjusted and checked
-
     //  split the command into args with " " as the delimiter
     std::istringstream streamer(_cmds.front()); // copy next command
     _cmds.pop_front(); // pop it out of the stack since we are handling it now.
@@ -47,8 +45,7 @@ bool atm::execute_cmd() {
     std::string s("");
     while (std::getline(streamer, s, ' ')) // push the split arguments into args.
         args.push_back(s);
-	//TODO fill commands after conditions
-		// the bank supposed to have these methodes, but only checking and sending them to be executed by account class
+		// the bank supposed to have these methods, but only checking and sending them to be executed by account class
 	
 	int accountNum = atoi(args[1].c_str());
     string password = args[2];
@@ -71,10 +68,7 @@ bool atm::execute_cmd() {
 
 	}
 	else if (args[0] == "Q") {
-
 		_owner_bank.delete_account(accountNum, password, this->_id);
-
-
 	}
 	else // transfer command
 	{
@@ -86,3 +80,4 @@ bool atm::execute_cmd() {
     return !_cmds.empty();
 }
 
+// 4.06 15.00 removed comments
